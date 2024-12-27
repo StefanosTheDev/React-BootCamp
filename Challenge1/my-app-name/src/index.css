@@ -1,0 +1,44 @@
+/* Add this to your index.css */
+.card {
+  max-width: 400px; /* Limit maximum width */
+  min-height: 500px; /* Ensure minimum height */
+  margin: 2rem auto; /* Center card */
+  padding: 2rem; /* Inner spacing */
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex; /* Use flexbox */
+  flex-direction: column; /* Stack items vertically */
+  align-items: center; /* Center items horizontally */
+}
+.profile {
+  width: 100%; /* Take full width of parent */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem; /* Consistent spacing between elements */
+}
+
+.profile img {
+  width: 150px; /* Fixed width */
+  height: 150px; /* Fixed height */
+  border-radius: 50%; /* Circular image */
+  object-fit: cover; /* Maintain aspect ratio */
+  margin-bottom: 1rem;
+}
+
+.profile h1 {
+  font-size: 1.5rem;
+  margin: 0; /* Remove default margins */
+  color: #333;
+  text-align: center;
+  word-wrap: break-word; /* Handle long text */
+}
+
+.profile p {
+  margin: 0.5rem 0; /* Consistent margins */
+  text-align: center;
+  width: 100%; /* Full width */
+  word-wrap: break-word; /* Handle long text */
+  max-width: 300px; /* Limit text width */
+}
