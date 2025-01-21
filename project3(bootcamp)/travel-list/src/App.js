@@ -11,6 +11,7 @@ export default function App() {
     setItems((items) => items.filter((item) => item.id !== id));
   }
 
+  //
   function handleToggleItem(id) {
     // this is how we update an objec tin an array.
     // Set items means in this case. Loop through the item array. I fthe ID of the ITEm matches the ID passe din
