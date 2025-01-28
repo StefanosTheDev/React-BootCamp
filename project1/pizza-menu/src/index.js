@@ -67,44 +67,56 @@ const pizzaData = [
 
 // each time we write jsx it can only have one root element
 function Menu() {
+  // const pizzas = pizzaData;
+  const pizzas = pizzaData;
+  const numPizzas = pizzas.length;
   return (
     <main className="menu">
-      <h2> Our Menu</h2>
-      <ul className="pizzas">
-        {pizzaData.map((pizza) => (
-          <Pizza pizzaObj={pizza} key={pizza.name} /> // name in this case is unique (our key)
-        ))}
-      </ul>
+      <h2>Our Menu</h2>
 
-      {/* 
-      <Pizza
-        name="Pizza Spinaci"
-        ingredients="Tomato, Mozarella, Spinach, and Ricotta Cheese"
-        photoName="pizza/spinaci.jpg"
-        price={10} // way to enter a number
-      />
-      <Pizza
-        name="Pizza Funghi"
-        ingredients="Tomato Mushrooms, Salsa"
-        price={100}
-        photoName="pizza/funghi.jpg"
-      /> */}
+      <p>
+        Authenetic Italian Cusine. 6 creative dishes to choose from. All from
+        our stone oven, all organic, all delicious.{' '}
+      </p>
+      {numPizzas > 0 ? (
+        <ul className="pizzas">
+          {pizzas.map((pizza) => (
+            <Pizza pizzaObj={pizza} key={pizza.name} />
+          ))}
+        </ul>
+      ) : (
+        <p>We're still working on your menu. Please come back later.</p>
+      )}
     </main>
   );
 }
 
-// Component as function needs to start wit upper case. and return
-function Pizza(props) {
-  console.log(props);
+// Component as function needs to start wit upper case
+function Pizza({ pizzaObj }) {
+  // this can be a good technique if i want to just
+  if (pizzaObj.soldOut) return null;
   return (
     <li className="pizza">
-      <img src={props.pizzaObj.photoName} alt={props.pizzaObj.name} />
+      <img src={pizzaObj.photoName} alt={pizzaObj.name} />
       <div>
-        <h3>{props.pizzaObj.name}</h3>
-        <p> {props.pizzaObj.ingredients}</p>
-        <span> {props.pizzaObj.price + 3} </span>
+        <h3>{pizzaObj.name}</h3>
+        <p> {pizzaObj.ingredients}</p>
+        <span> {pizzaObj.price + 3} </span>
       </div>
     </li>
+  );
+}
+
+function Order({ closeHour, openHour }) {
+  return (
+    <div className="order">
+      <p>
+        We're open until {openHour}:00 to {closeHour}:00 Come visit us order
+        online.
+      </p>
+
+      <button className="btn">Order</button>
+    </div>
   );
 }
 function Footer() {
@@ -116,9 +128,18 @@ function Footer() {
   // if (hour >= openHour && hour <= closeHour) alert("We're currently open!");
   // else alert('Sorry were closed');
 
+  // if Not Open
+  if (!isOpen) return <p>CLOSED </p>;
+  // Because isOpen is true. Now its Open. SHort Circuting Means if this condition is false. or falsey then the second part of the operation wont be executed.
   return (
     <footer className="footer">
-      {new Date().toLocaleDateString()} We're currently open{' '}
+      {isOpen ? (
+        <Order closeHour={closeHour} openHour={openHour} />
+      ) : (
+        <p>
+          Were happy to welcome you between {closeHour}:00 and {closeHour}: 00.
+        </p>
+      )}
     </footer>
   );
 }
