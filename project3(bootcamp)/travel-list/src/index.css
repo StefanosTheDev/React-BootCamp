@@ -12,10 +12,10 @@ html {
 
 body {
   font-size: 2.4rem;
-  font-family: sans-serif;
-  color: #5a3e2b;
-  font-family: 'Quicksand';
+  font-family: 'Quicksand', sans-serif;
   font-weight: 500;
+  color: #5a3e2b;
+  overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
 .app {
@@ -93,8 +93,11 @@ input {
 
 .list ul {
   list-style: none;
-  width: 80%;
-  overflow: scroll;
+  width: 100%; /* Ensure the list doesn't exceed container width */
+  padding: 0;
+  margin: 0;
+  max-width: 80%; /* Restricts width of the list */
+  overflow-y: auto; /* Only scroll vertically */
 
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
