@@ -1,95 +1,49 @@
 import { useState } from 'react';
-
-const initialItems = [
-  { id: 1, description: 'Passports', quantity: 2, packed: true },
-  { id: 2, description: 'Socks', quantity: 12, packed: true },
-];
-
+import Logo from './Logo';
+import Form from './Form';
+import { PackingList } from './PackingList';
+import { Stats } from './Stats';
 export default function App() {
+  const [items, setItems] = useState([]);
+
+  function handleAddItems(item) {
+    // new state depends on the old state. Destructure them. Because Props / stuff is immutable. so thie spread operatore can help here.
+    setItems((items) => [...items, item]);
+  }
+
+  function handleDeleteItem(id) {
+    // Step 1. Get current items sas its input.
+    // Step 2 When item.id is =. Then that element will no longer be part of the final array.
+    // A Way To Delete This stuff. So were filtering it out and setting the new state.
+    setItems((items) => items.filter((item) => item.id !== id));
+  }
+
+  function handleClearList() {
+    const confirmed = window.confirm(
+      'Are you sure you want to delete all items? '
+    );
+    if (confirmed) setItems([]);
+  }
+  // Great way to update everythign and return the Item Array back so we modify and return new array
+  // Map array. how we update the item in the array. here is a great approach.
+  function handleToggleItem(id) {
+    setItems((items) =>
+      items.map((item) =>
+        item.id === id ? { ...item, packed: !item.packed } : item
+      )
+    );
+  }
   return (
     <div className="app">
       <Logo />
-      <Form />
-      <PackingList />
-      <Stats />
-    </div>
-  );
-}
-
-function Logo() {
-  return <h1> **Far Away</h1>;
-}
-
-function Form() {
-  const [description, setDescription] = useState('');
-  const [quantity, setQuantity] = useState(1);
-
-  function handleSubmit(e) {
-    // This prevents reload.. The Event object is the E. From Handlesubmit. this iswhat were working with
-    if (!description) return;
-    e.preventDefault();
-    const newItem = { description, quantity, packed: false, id: Date.now() };
-    console.log(newItem);
-
-    // Controlled Elements allow usto keep our components statew itht hese dOm form elements
-    setDescription('');
-    setQuantity(1);
-  }
-
-  return (
-    <form className="add-form" onSubmit={handleSubmit}>
-      <h3> What do you need for your trip? </h3>
-      <select
-        value={quantity}
-        onChange={(e) => setQuantity(Number(e.target.value))}
-      >
-        {Array.from({ length: 20 }, (_, i) => i + 1).map((num) => (
-          <option value={num} key={num}>
-            {num}
-          </option>
-        ))}
-      </select>
-      <input
-        type="text"
-        placeholder="Item..."
-        value={description}
-        onChange={(e) => {
-          console.log(e.target.value);
-          setDescription(e.target.value);
-        }}
+      <Form onAddItems={handleAddItems} />
+      <PackingList
+        items={items}
+        onDeleteItem={handleDeleteItem}
+        onToggleItem={handleToggleItem}
+        onClearLists={handleClearList}
       />
-      <button>Add</button>
-    </form>
-  );
-}
-
-function PackingList() {
-  return (
-    // Creating a new Item component every time and have a Item Prop
-    <div>
-      <ul className="list">
-        {initialItems.map((item) => (
-          <Item item={item} key={item.id} />
-        ))}
-      </ul>
+      <Stats items={items} />
     </div>
-  );
-}
-
-function Item({ item }) {
-  return (
-    <li>
-      <span style={item.packed ? { textDecoration: 'line-through' } : {}}>
-        {item.quantity} {item.description}
-      </span>
-      <button> 🔴 </button>
-    </li>
-  );
-}
-function Stats() {
-  return (
-    <footer>
-      <em> You have X items on your list. And you already packed X (X%)</em>
-    </footer>
   );
 }
