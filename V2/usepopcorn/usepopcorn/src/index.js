@@ -2,9 +2,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
-
-ReactDOM.render(
-  // Remove StrictMode
-  <App />,
-  document.getElementById('root')
-);
+import { createRoot } from 'react-dom/client';
+import "./index.css";
+const root = createRoot(document.getElementById('root'));
+root.render(<App />);

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 const tempMovieData = [
   {
@@ -47,37 +47,12 @@ const tempWatchedData = [
   },
 ];
 
-const KEY = 'fb51c432';
 const average = (arr) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
 export default function App() {
-  const [movies, setMovies] = useState([]);
-  const [watched, setWatched] = useState([]);
-  const [isLoading, setIsLoading] = useState(false); // Loading State
-  const query = 'interstellar';
-  // YOu ahve the emnpty array so this wiill only run on mount
-  // Doesnt return anything. We pass in a function. Its the Effect. It contains the code we want to run as a side effect.
-  // The Array is the second argument. its the Dependency Array.
-  // With this effect. It will only run on mount so it will run for the first time.
-  // This Solves the Infinit Request.
-
-  // Effect is only running when it mounts.IF we want to fetch our data as soon as it loads this is ideal. Small App this is good.
-  // 1. use thE Effect hook to reigsteer an Effect
-  // 2. WIHTOUT IT it was loading while it weas being rendered. WIth this its AFTER THE RENDER
-  // 3. We pass the empty array. This means the effect will only be executed when it first mounts.
-  useEffect(function () {
-    async function fetchMovies() {
-      setIsLoading(true); // Loading is True.
-      const res = await fetch(`http://www.omdbapi.com/?apikey=${KEY}&s=${query}
-    `);
-      const data = await res.json();
-      setMovies(data.Search);
-      setIsLoading(false); // cuz now everyting should be loaded.
-      console.log(data.Search);
-    }
-    fetchMovies(); // Calling it.
-  }, []);
+  const [movies, setMovies] = useState(tempMovieData);
+  const [watched, setWatched] = useState(tempWatchedData);
 
   return (
     <>
@@ -87,7 +62,9 @@ export default function App() {
       </NavBar>
 
       <Main>
-        <Box>{isLoading ? <Loader /> : <MovieList movies={movies} />}</Box>
+        <Box>
+          <MovieList movies={movies} />
+        </Box>
 
         <Box>
           <WatchedSummary watched={watched} />
@@ -97,9 +74,7 @@ export default function App() {
     </>
   );
 }
-function Loader() {
-  return <p className="loader">Loading .. </p>;
-}
+
 function NavBar({ children }) {
   return (
     <nav className="nav-bar">
