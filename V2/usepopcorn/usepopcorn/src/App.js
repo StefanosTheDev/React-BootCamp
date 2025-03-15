@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 
 const tempMovieData = [
   {
@@ -52,64 +52,76 @@ const average = (arr) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
 export default function App() {
+  const [query, setQuery] = useState('inception');
+
   const [movies, setMovies] = useState([]);
   const [watched, setWatched] = useState([]);
   const [isLoading, setIsLoading] = useState(false); // Loading State
   const [error, setError] = useState('');
-  const query = 'intersffftellar';
-  // YOu ahve the emnpty array so this wiill only run on mount
-  // Doesnt return anything. We pass in a function. Its the Effect. It contains the code we want to run as a side effect.
-  // The Array is the second argument. its the Dependency Array.
-  // With this effect. It will only run on mount so it will run for the first time.
-  // This Solves the Infinit Request.
+  const tempQuery = 'interstellar';
+  const [selectedId, setSelectedId] = useState(null);
+  const KEY = 'fb51c432';
 
-  // Effect is only running when it mounts.IF we want to fetch our data as soon as it loads this is ideal. Small App this is good.
-  // 1. use thE Effect hook to reigsteer an Effect
-  // 2. WIHTOUT IT it was loading while it weas being rendered. WIth this its AFTER THE RENDER
-  // 3. We pass the empty array. This means the effect will only be executed when it first mounts.
-  useEffect(function () {
-    async function fetchMovies() {
-      try {
-        setIsLoading(true); // Loading is True.
-        const res =
-          await fetch(`http://www.omdbapi.com/?apikey=${KEY}&s=${query}
-      `);
-        // If someone loses WIFI
-        if (!res.ok)
-          throw new Error('Something Went Wrong with Fetching Movies ');
+  function handleSelectMovie(id) {
+    setSelectedId(id);
+  }
+  useEffect(
+    function () {
+      async function fetchMovies() {
+        try {
+          setIsLoading(true); // Loading is True.
+          setError('');
+          const res = await fetch(
+            `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`
+          );
+          // If someone loses WIFI
+          if (!res.ok)
+            throw new Error('Something Went Wrong with Fetching Movies ');
 
-        const data = await res.json();
+          const data = await res.json();
 
-        if (data.Response === 'False') throw new Error('Movie not found ');
-        setMovies(data.Search);
-        setIsLoading(false); // cuz now everyting should be loaded.
-        console.log(data.Search);
-      } catch (error) {
-        console.error(error.message);
-        setError(error.message);
-      } finally {
-        setIsLoading(false);
+          if (data.Response === 'False') throw new Error('Movie not found ');
+          setMovies(data.Search);
+        } catch (error) {
+          console.error(error.message);
+          setError(error.message);
+        } finally {
+          setIsLoading(false);
+        }
       }
-    }
-
-    fetchMovies(); // Calling it.
-  }, []);
+      if (query.length < 3) {
+        setMovies([]);
+        setError('');
+        return;
+      }
+      fetchMovies(); // Calling it.
+    },
+    [query] // We ahave to pass our dependicens of thisaffect. Since we are trying to get query
+  );
 
   return (
     <>
       <NavBar>
-        <Search />
+        <Search query={query} setQuery={setQuery} />
         <NumResults movies={movies} />
       </NavBar>
 
       <Main>
         {/* <Box>{isLoading ? <Loader /> : <MovieList movies={movies} />}</Box> */}
         {isLoading && <Loader />}
-        {!isLoading && !error && <MovieList movies={movies} />}
+        {!isLoading && !error && (
+          <MovieList movies={movies} onSelectMovie={handleSelectMovie} />
+        )}
         {error && <ErrorMessage message={error} />}
         <Box>
-          <WatchedSummary watched={watched} />
-          <WatchedMoviesList watched={watched} />
+          {selectedId ? (
+            <MovieDetails selectedId={selectedId} />
+          ) : (
+            <>
+              <WatchedSummary watched={watched} />
+              <WatchedMoviesList watched={watched} />
+            </>
+          )}
         </Box>
       </Main>
     </>
@@ -143,9 +155,7 @@ function Logo() {
   );
 }
 
-function Search() {
-  const [query, setQuery] = useState('');
-
+function Search({ query, setQuery }) {
   return (
     <input
       className="search"
@@ -208,13 +218,20 @@ function WatchedBox() {
 }
 */
 
-function MovieList({ movies }) {
+function MovieDetails({ selectedId }) {
+  return <div className="details">{selectedId}</div>;
+}
+
+function MovieList({ movies, onSelectMovie }) {
   return (
-    <ul className="list">
-      {movies?.map((movie) => (
-        <Movie movie={movie} key={movie.imdbID} />
-      ))}
-    </ul>
+    <>
+      <li onClick={() => onSelectMovie(movies.imdbID)}></li>
+      <ul className="list">
+        {movies?.map((movie) => (
+          <Movie movie={movie} key={movie.imdbID} />
+        ))}
+      </ul>
+    </>
   );
 }
 
